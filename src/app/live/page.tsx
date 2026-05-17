@@ -11,7 +11,7 @@ const Index: FC = () => {
             try {
                 await axios.post('/api/verify');
                 const currentTime = Date.now();
-                router.push(`/contact/${currentTime}`);
+                router.replace(`/contact/${currentTime}`);
             } catch {
                 //
             }

