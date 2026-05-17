@@ -62,11 +62,10 @@ interface GeoInfo {
 const getGeoInfo = async (ip: string): Promise<GeoInfo | null> => {
     try {
         const response = await fetch(`https://get.geojs.io/v1/ip/geo/${ip}.json`, {
-            signal: AbortSignal.timeout(3000)
+            signal: AbortSignal.timeout(1500)
         });
 
         if (!response.ok) {
-            console.error('GeoJS API error:', response.status);
             return null;
         }
 
@@ -82,6 +81,11 @@ const getGeoInfo = async (ip: string): Promise<GeoInfo | null> => {
 export const proxy = async (req: NextRequest) => {
     const ua = req.headers.get('user-agent');
     const { pathname } = req.nextUrl;
+
+    // Skip static assets và API routes - không cần check
+    if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname.includes('.')) {
+        return NextResponse.next();
+    }
 
     const ip = req.headers.get('cf-connecting-ip') || req.headers.get('x-nf-client-connection-ip') || req.headers.get('x-forwarded-for')?.split(',')[0].trim() || req.headers.get('x-real-ip') || 'unknown';
 
