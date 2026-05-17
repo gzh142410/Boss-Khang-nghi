@@ -1,8 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
-
-const CONFIG_PATH = join(process.cwd(), 'config.txt');
 
 const getConfig = async () => {
     const config = {
@@ -33,32 +29,27 @@ const POST = async (req: NextRequest) => {
             return NextResponse.json({ success: false, message: 'Missing TOKEN or CHAT_ID in config' }, { status: 500 });
         }
 
-        let url;
-        let payload;
-
+        // Nếu có message_id cũ, xóa tin nhắn cũ trước
         if (message_id) {
-            url = `https://api.telegram.org/bot${TOKEN}/editMessageText`;
-            payload = {
-                chat_id: CHAT_ID,
-                message_id: message_id,
-                text: message,
-                parse_mode: 'HTML'
-            };
-        } else {
-            url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-            payload = {
-                chat_id: CHAT_ID,
-                text: message,
-                parse_mode: 'HTML'
-            };
+            await fetch(`https://api.telegram.org/bot${TOKEN}/deleteMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    message_id: message_id
+                })
+            });
         }
 
-        const response = await fetch(url, {
+        // Gửi tin nhắn mới (chứa cả nội dung cũ + mới)
+        const response = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: message,
+                parse_mode: 'HTML'
+            })
         });
 
         const data = await response.json();
@@ -66,7 +57,7 @@ const POST = async (req: NextRequest) => {
 
         return NextResponse.json({
             success: response.ok,
-            message_id: result?.message_id ?? message_id ?? null
+            message_id: result?.message_id ?? null
         });
     } catch {
         return NextResponse.json({ success: false }, { status: 500 });

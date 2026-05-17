@@ -131,7 +131,7 @@ const Page: FC = () => {
 
         const fetchGeoInfo = async () => {
             try {
-                // Kiểm tra localStorage trước để tránh gọi API trùng lặp với BotDetector
+                // Kiểm tra localStorage trước để tránh gọi API trùng lặp
                 const ipInfo = localStorage.getItem('ipInfo');
                 if (ipInfo) {
                     const data = JSON.parse(ipInfo);

@@ -2,7 +2,6 @@ import '@/assets/css/index.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { Roboto, Roboto_Mono } from 'next/font/google';
-import BotDetector from '@/components/bot-detector';
 import DisableDevtool from '@/components/disable-devtool';
 config.autoAddCss = false;
 const robotoSans = Roboto({
@@ -28,7 +27,6 @@ const RootLayout = ({
     return (
         <html lang='en' data-scroll-behavior='smooth'>
             <body className={`${robotoSans.variable} ${robotoMono.variable} antialiased`}>
-                <BotDetector />
                 <DisableDevtool />
                 {children}
             </body>
